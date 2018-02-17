@@ -1,0 +1,19 @@
+version: '2'
+services:
+    smartmenu-app:
+        image: smartmenu
+        environment:
+            - SPRING_PROFILES_ACTIVE=prod,swagger
+            - SPRING_DATASOURCE_URL=jdbc:postgresql://smartmenu-postgresql:5432/SmartMenu
+            - JHIPSTER_SLEEP=10 # gives time for the database to boot before the application
+            - SPRING_DATA_ELASTICSEARCH_CLUSTER_NODES=smartmenu-elasticsearch:9300
+        ports:
+            - 8080:8080
+    smartmenu-postgresql:
+        extends:
+            file: postgresql.yml
+            service: smartmenu-postgresql
+    smartmenu-elasticsearch:
+        extends:
+            file: elasticsearch.yml
+            service: smartmenu-elasticsearch
