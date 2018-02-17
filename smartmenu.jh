@@ -1,0 +1,135 @@
+entity Restaurant {
+	name String required,
+    score Long,
+    type RestaurantType
+}
+
+enum RestaurantType {
+    BREAKFAST, LUNCH, DINNER
+}
+
+entity Location {
+	streetAddress String,
+    neigboorhood String,
+    district String,
+	city String,
+	postalCode String
+}
+
+entity GeoPoint {
+	lat Long,
+    lng Long
+}
+
+entity Information {
+	title String,
+	description String
+}
+
+entity Review {
+	comment String,
+    time ZonedDateTime
+}
+
+entity Menu {
+	title String,
+    description String
+}
+
+entity Category {
+	title String required,
+    description String
+}
+
+entity Item {
+	title String,
+	description String,
+    price String,
+    quantity Integer,
+    ingredients String,
+    calorie String
+    status ItemStatus
+}
+
+entity Customer {
+	firstName String,
+	lastName String,
+	email String,
+	phoneNumber String
+}
+
+entity Order {
+	id Long,
+    table String,
+    time ZonedDateTime,
+    status OrderStatus,
+    paymentType PaymentType,
+    amount Long
+}
+
+entity Image {
+	path String,
+    title String,
+    description String
+}
+
+entity Photo {
+	path String,
+    link String,
+    title String,
+    description String,
+    time ZonedDateTime
+}
+
+enum ItemStatus {
+    ACTIVE, PASSIVE
+}
+
+enum OrderStatus {
+    APPROVED, PREPARING, READY, FINISH, DELAYED, CANCELED 
+}
+
+enum PaymentType {
+	CASH, CREDIT_CARD
+}
+
+relationship OneToOne {
+	Restaurant{menu} to Menu,
+    Restaurant{info} to Information,
+    Location{point} to GeoPoint,
+    Customer{location} to Location,
+    Category{image} to Image
+}
+
+relationship OneToMany {
+	Restaurant{locations} to Location,
+    Restaurant{reviews} to Review,
+    Restaurant{images} to Image,
+    Menu{categories} to Category
+	Category{items} to Item,
+	Restaurant{customers} to Customer,
+    Item{comments} to Review,
+    Item{images} to Image,
+    Customer{favoriteRestaurants} to Restaurant,
+    Customer{favoriteCategories} to Restaurant,
+    Customer{favoriteItems} to Restaurant,
+    Customer{photos} to Photo,
+    Customer{photos} to Photo,
+    Order{photos} to Photo
+}
+
+relationship ManyToOne {
+	Customer{customers} to Order
+}
+
+// Set pagination options
+paginate Menu, Category, Item, Order  with infinite-scroll
+paginate Restaurant, Customer with pagination
+
+dto * with mapstruct
+
+// Set service options to all except few
+service all with serviceImpl except Image, Photo
+
+// Set an angular suffix
+angularSuffix * with smart_menu
